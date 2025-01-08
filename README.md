@@ -1,0 +1,1 @@
+# swnr-ship-configurator
