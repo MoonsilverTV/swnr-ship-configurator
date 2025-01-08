@@ -18,6 +18,8 @@
           clojure
           clojure-lsp
           cljfmt
+          nodejs_23
+          jdk
         ];
       };
     };

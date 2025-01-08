@@ -1,0 +1,17 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ [[re-frame/re-frame      "1.4.3"]
+  [reagent/reagent        "1.2.0"]
+  [day8/shadow-git-inject "0.0.5"]]
+
+ :dev-http {8080 "public"}
+
+ :builds
+ {:frontend
+  {:target :browser
+   :modules {:main {:init-fn moontv.swnr.shipconfigurator.app/init}}}}}
