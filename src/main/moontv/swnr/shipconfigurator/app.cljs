@@ -43,7 +43,8 @@
                         (into (sorted-map)))]
      {:time (js/Date.)         ;; What it returns becomes the new application state
       :time-color "orange"
-      :ship-data ship-data})))  ;; so the application state will initially be a map with two keys
+      :ship-data ship-data
+      :selected-ship :large-station})))  ;; so the application state will initially be a map with two keys
 
 (rf/reg-event-db                ;; usage:  (dispatch [:time-color-change 34562])
  :time-color-change            ;; dispatched when the user enters a new colour into the UI text field
@@ -54,6 +55,11 @@
  :timer                         ;; every second an event of this kind will be dispatched
  (fn [db [_ new-time]]          ;; note how the 2nd parameter is destructured to obtain the data value
    (assoc db :time new-time)))  ;; compute and return the new application state
+
+(rf/reg-event-db
+ :select-ship
+ (fn [db [_event-name type]]
+   (assoc db :selected-ship type))) ;; TODO: reset ship if it changed; also have a warning for that
 
 ;; -- Domino 4 - Query  -------------------------------------------------------
 
@@ -71,6 +77,11 @@
  :ship-data
  (fn [db _]
    (:ship-data db)))
+
+(rf/reg-sub
+ :selected-ship
+ (fn [db _]
+   (:selected-ship db)))
 
 ;; -- Domino 5 - View Functions ----------------------------------------------
 
@@ -96,7 +107,8 @@
 
 (defn hull-selector
   []
-  (let [ships @(rf/subscribe [:ship-data])]
+  (let [ships @(rf/subscribe [:ship-data])
+        select-ship (fn [type] (rf/dispatch [:select-ship type]))]
     [:details
      {:open true}
      [:table
@@ -106,7 +118,8 @@
        (->> ships
             seq
             (map (fn [[type data]]
-                   [:tr {:key type}
+                   [:tr {:key type
+                         :on-mouse-down #(select-ship type)}
                     [:td (:name data)] ;;REVIEW: is there a better way to do this?
                     [:td (:cost data)]
                     [:td (:speed data)]
@@ -134,7 +147,10 @@
 
 (defn starship-summary
   []
-  [:div "this is the starship summary"])
+  (let [selected-ship @(rf/subscribe [:selected-ship])]
+    [:div "this is the starship summary"
+     [:table
+      [:thead>tr>th (:name (selected-ship @(rf/subscribe [:ship-data])))]]]))
 
 (defn swnr-starship-configurator-app
   []
