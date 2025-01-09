@@ -59,7 +59,9 @@
 (rf/reg-event-db
  :select-ship
  (fn [db [_event-name type]]
-   (assoc db :selected-ship type))) ;; TODO: reset ship if it changed; also have a warning for that
+   (when (not (identical? (:selected-ship db) type))
+     (when (js/confirm "Changing your hull type will delete your data, are you sure?") ;; REVIEW: is this impurity okay?
+       (assoc db :selected-ship type)))))
 
 ;; -- Domino 4 - Query  -------------------------------------------------------
 
