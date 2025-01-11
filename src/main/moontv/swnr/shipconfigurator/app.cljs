@@ -35,7 +35,6 @@
                          :battleship ["Battleship" 50000000 0 20 100 200 1000 16 75 50 15 :capital]
                          :small-station ["Small Station" 5000000 nil 5 120 20 200 11 50 40 10 :cruiser]
                          :large-station ["Large Station" 40000000 nil 20 120 100 1000 17 125 75 30 :capital]}
-                        seq
                         (map (fn [[key value]]
                                [key
                                 (zipmap [:name :cost :speed :armor :hp :crew-min :crew-max :ac :power :mass :hardpoints :class]
@@ -107,6 +106,12 @@
               :value @(rf/subscribe [:time-color])        ;; subscribe
               :on-change emit}]]))  ;; <---
 
+(defn hull-selector-line [[ship-type ship-data] on-mouse-down]
+  [:tr {:key ship-type
+        :on-mouse-down on-mouse-down}
+   (for [column [:name :cost :speed :armor :hp :crew-min :crew-max :ac :power :mass :hardpoints :class]]
+     [:td {:key column} (get ship-data column)])])
+
 (defn hull-selector
   []
   (let [ships @(rf/subscribe [:ship-data])
@@ -115,26 +120,11 @@
      {:open true}
      [:table
       [:thead [:tr (->> '("Hull Type" "Cost" "Speed" "Armor" "HP" "Crew-Min" "Crew-Max" "AC" "Power" "Mass" "Hardpoints" "Class")
-                        (map (fn [column-name] [:th {:key column-name} column-name])))]] ;;todo use index instead of column name for key
+                        (map (fn [column-name] [:th {:key column-name} column-name])))]]
       [:tbody
-       (->> ships
-            seq
-            (map (fn [[type data]]
-                   [:tr {:key type
-                         :on-mouse-down #(select-ship type)}
-                    [:td (:name data)] ;;REVIEW: is there a better way to do this?
-                    [:td (:cost data)]
-                    [:td (:speed data)]
-                    [:td (:armor data)]
-                    [:td (:hp data)]
-                    [:td (:crew-min data)]
-                    [:td (:crew-max data)]
-                    [:td (:ac data)]
-                    [:td (:power data)]
-                    [:td (:mass data)]
-                    [:td (:hardpoints data)]
-                    [:td (:class data)] ;;TODO: convert to readable string
-                    ])))]]]))
+       (for [[ship-type ship] ships]
+         [hull-selector-line [ship-type ship] #(select-ship ship-type)])]]]))
+
 (defn fitting-selector
   []
   [:div "this is the fitting selector"])
