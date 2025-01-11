@@ -7,6 +7,9 @@
 ;; A detailed walk-through of this source code is provided in the docs:
 ;; https://day8.github.io/re-frame/dominoes-live/
 
+(comment #_{:clj-kondo/ignore [:duplicate-require]}
+ (require '[re-frame.db :as db])
+         @db/app-db)
 ;; -- Domino 1 - Event Dispatch -----------------------------------------------
 
 (defn dispatch-timer-event
@@ -39,7 +42,7 @@
                                [key
                                 (zipmap [:name :cost :speed :armor :hp :crew-min :crew-max :ac :power :mass :hardpoints :class]
                                         value)]))
-                        (into (sorted-map)))]
+                        (into {}))] ;; TODO: fix ordering in UI (maybe i don't even want a map and instead want a [[] [] []...])
      {:time (js/Date.)         ;; What it returns becomes the new application state
       :time-color "orange"
       :ship-data ship-data
@@ -107,10 +110,10 @@
               :on-change emit}]]))  ;; <---
 
 (defn hull-selector-line [[ship-type ship-data] on-mouse-down]
-  [:tr {:key ship-type
-        :on-mouse-down on-mouse-down}
+  ^{:key ship-type}
+  [:tr {:on-mouse-down on-mouse-down}
    (for [column [:name :cost :speed :armor :hp :crew-min :crew-max :ac :power :mass :hardpoints :class]]
-     [:td {:key column} (get ship-data column)])])
+     ^{:key column} [:td (get ship-data column)])])
 
 (defn hull-selector
   []
@@ -120,10 +123,10 @@
      {:open true}
      [:table
       [:thead [:tr (->> '("Hull Type" "Cost" "Speed" "Armor" "HP" "Crew-Min" "Crew-Max" "AC" "Power" "Mass" "Hardpoints" "Class")
-                        (map (fn [column-name] [:th {:key column-name} column-name])))]]
+                        (map (fn [column-name] ^{:key column-name} [:th column-name])))]]
       [:tbody
        (for [[ship-type ship] ships]
-         [hull-selector-line [ship-type ship] #(select-ship ship-type)])]]]))
+         ^{:key ship-type} [hull-selector-line [ship-type ship] #(select-ship ship-type)])]]]))
 
 (defn fitting-selector
   []
