@@ -8,7 +8,9 @@
  [[cider/cider-nrepl      "0.24.0"]
   [re-frame/re-frame      "1.4.3"]
   [reagent/reagent        "1.2.0"]
-  [day8/shadow-git-inject "0.0.5"]]
+  [day8/shadow-git-inject "0.0.5"]
+  [org.clojure/test.check "1.1.1"] ;; TODO: how to do test time only dependency?
+  ]
 
  :dev-http {8080 "public"}
 
