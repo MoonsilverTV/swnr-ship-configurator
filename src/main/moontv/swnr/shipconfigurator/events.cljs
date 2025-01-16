@@ -2,8 +2,8 @@
   (:require [re-frame.core :as rf]
             [moontv.swnr.shipconfigurator.db-spec :as db-s]))
 
-(rf/reg-event-db              ;; sets up initial application state
- ::initialize                 ;; usage:  (dispatch [:initialize])
+(rf/reg-event-db
+ ::initialize
  (fn [_ _]                   ;; the two parameters are not important here, so use _
    (let [ship-data (->> {:strike-fighter ["Strike Fighter" 200000 5 5 8 1 1 16 5 2 1 ::db-s/fighter]
                          :shuttle ["Shuttle" 200000 3 0 15 1 10 11 3 5 1 ::db-s/fighter]

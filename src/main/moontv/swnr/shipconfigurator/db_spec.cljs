@@ -1,11 +1,12 @@
 (ns moontv.swnr.shipconfigurator.db-spec
   (:require [clojure.spec.alpha :as s]
-            [re-frame.db :as db]))
+            [re-frame.db :as db]
+            [cljs.core :as c]))
 
 (def pos-or-zero (s/or ::positive pos? ::zero zero?))
 
 (s/def ::ship-id keyword?) ;; TODO constrain this or no? ...
-(s/def ::selected-ship keyword?);; FIXME ::ship-id)
+(s/def ::selected-ship ::ship-id)
 (s/def ::ship-name (s/and string? not-empty))
 (s/def ::ship-cost (s/and number? pos-or-zero))
 (s/def ::ship-speed (s/nilable (s/and int? pos-or-zero)))
@@ -26,12 +27,13 @@
                                          ::ship-mass ::ship-hardpoints ::ship-class])
                            #(<= (::ship-crew-min %) (::ship-crew-max %))))
 
-(s/def ::ship-data (s/coll-of (s/tuple ::ship-id ::ship-data-record) :distinct true)) ;; TODO distinct id keys
+(s/def ::ship-data (s/and (s/map-of ::ship-id ::ship-data-record)
+                          #(not-empty %)))
 
 (s/def ::app-db (s/keys :req [::ship-data ::selected-ship]))
 
 (comment
   #_{:clj-kondo/ignore [:unresolved-namespace]}
-  (re-frame.core/dispatch :initialize)
+  (re-frame.core/dispatch :moontv.swnr.shipconfigurator.events/initialize)
   (s/explain ::app-db @re-frame.db/app-db))
 
