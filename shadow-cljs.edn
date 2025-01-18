@@ -15,6 +15,9 @@
  :dev-http {8080 "public"}
 
  :builds
+ ;; TODO set up test runner(s): https://shadow-cljs.github.io/docs/UsersGuide.html#_testing
  {:frontend
   {:target :browser
+   :devtools {:repl-pprint true}
+   ;; TODO make cache friendly with https://shadow-cljs.github.io/docs/UsersGuide.html#NameHashing
    :modules {:main {:init-fn moontv.swnr.shipconfigurator.app/init}}}}}

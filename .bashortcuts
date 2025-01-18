@@ -1,1 +1,2 @@
 npx shadow-cljs watch frontend
+npx shadow-cljs run shadow.cljs.build-report frontend report.html
