@@ -2,7 +2,7 @@
   (:require
    [moontv.swnr.shipconfigurator.db-spec :as db-s]
    [moontv.swnr.shipconfigurator.events :as events]
-   [moontv.swnr.shipconfigurator.subs :as subs]
+   [moontv.swnr.shipconfigurator.sub :as sub]
    [re-frame.core :as rf]))
 
 ;; TODO: really understand props passing, subscriptions, and rerenders (especially with callbacks)
@@ -18,7 +18,7 @@
 
 (defn hull-selector
   []
-  (let [ships @(rf/subscribe [::subs/ship-data])
+  (let [ships @(rf/subscribe [::sub/ship-data])
         select-ship (fn [type] (rf/dispatch [::events/select-ship type]))]
     [:details
      {:open true}
@@ -43,10 +43,10 @@
 
 (defn starship-summary
   []
-  (let [selected-ship @(rf/subscribe [::subs/selected-ship])]
+  (let [selected-ship @(rf/subscribe [::sub/selected-ship])]
     [:div "this is the starship summary"
      [:table
-      [:thead>tr>th (::db-s/ship-name (selected-ship @(rf/subscribe [::subs/ship-data])))]]])) ;; TODO: get this value injected instead
+      [:thead>tr>th (::db-s/ship-name (selected-ship @(rf/subscribe [::sub/ship-data])))]]])) ;; TODO: get this value injected instead
 
 (defn swnr-starship-configurator-app
   []

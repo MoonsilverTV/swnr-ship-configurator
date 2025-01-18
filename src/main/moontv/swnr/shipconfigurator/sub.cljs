@@ -1,11 +1,11 @@
-(ns moontv.swnr.shipconfigurator.subs
+(ns moontv.swnr.shipconfigurator.sub
   (:require
    [clojure.spec.alpha :as s]
    [moontv.swnr.shipconfigurator.db-spec :as db-s]
    [re-frame.core :as rf]))
-; TODO: subscription specs (possibly in another file, check best practices)
 
 ;; XXX: monitor this, this does seem like a strong macro candidate (if specs stay in the same file)
+
 (s/def ::ship-data ::db-s/ship-data)
 (s/fdef ship-data
   :args (s/cat :db ::db-s/app-db :_ any?)

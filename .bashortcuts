@@ -1,2 +1,3 @@
 npx shadow-cljs watch frontend
 npx shadow-cljs run shadow.cljs.build-report frontend report.html
+npx shadow-cljs compile test && node out/node_tests.js

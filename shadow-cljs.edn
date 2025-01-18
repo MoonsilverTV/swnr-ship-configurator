@@ -16,7 +16,17 @@
 
  :builds
  ;; TODO set up test runner(s): https://shadow-cljs.github.io/docs/UsersGuide.html#_testing
- {:frontend
+ {:test
+  {:target :node-test
+   :output-to "out/test/node_tests.js"
+   :ns-regexp "-test$"}
+  :test-watch
+  {:target :node-test
+   :output-to "out/testwatch/node_tests.js"
+   :ns-regexp "-test$"
+   :autorun true}
+
+  :frontend
   {:target :browser
    :devtools {:repl-pprint true}
    ;; TODO make cache friendly with https://shadow-cljs.github.io/docs/UsersGuide.html#NameHashing

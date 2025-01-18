@@ -1,7 +1,7 @@
 (ns moontv.swnr.shipconfigurator.app
   (:require
    [clojure.string]
-   [moontv.swnr.shipconfigurator.subs :as subs] ; must be imported so it isn't lost in treeshaking
+   [moontv.swnr.shipconfigurator.sub :as sub] ; must be imported so it isn't lost in treeshaking
    [moontv.swnr.shipconfigurator.views :as views]
    [re-frame.core :as rf]
    [moontv.swnr.shipconfigurator.events :as events]
