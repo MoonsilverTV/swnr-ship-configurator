@@ -1,10 +1,22 @@
 (ns moontv.swnr.shipconfigurator.events
   (:require [re-frame.core :as rf]
+            [clojure.spec.alpha :as s]
             [moontv.swnr.shipconfigurator.db-spec :as db-s]))
+
+(defn check-and-throw ;; TODO refactor this to be optimized out in prod?
+  "Throws an exception if `db` doesn't match the Spec `a-spec`."
+  [a-spec db]
+  (when-not (s/valid? a-spec db)
+    (js/alert "app-db spec violation")
+    (throw (ex-info (str "spec check failed: " (s/explain-str a-spec db)) {}))))
+
+;; now we create an interceptor using `after`
+(def check-spec-interceptor (rf/after (partial check-and-throw ::db-s/app-db)))
 
 (rf/reg-event-db
  ::initialize
- (fn [_ _]                   ;; the two parameters are not important here, so use _
+ [check-spec-interceptor]
+ (fn [_db? _params?]
    (let [ship-data (->> {:strike-fighter ["Strike Fighter" 200000 5 5 8 1 1 16 5 2 1 ::db-s/fighter]
                          :shuttle ["Shuttle" 200000 3 0 15 1 10 11 3 5 1 ::db-s/fighter]
                          :free-merchant ["Free Merchant" 500000 3 2 20 1 6 14 10 15 2 ::db-s/frigate]
@@ -28,9 +40,10 @@
 
 (rf/reg-event-db
  ::select-ship
+ [check-spec-interceptor]
  (fn [db [_event-name type]]
    (when (not (= (::db-s/selected-ship db) type))
-     (when (js/confirm "Changing your hull type will delete your data, are you sure?") ;; REVIEW: is this impurity okay?
+     (when (js/confirm "Changing your hull type will delete your data, are you sure?") ;; TODO: get rid of this impurity, it ruins testing
        ;; TODO: implement undo / redo so we no longer need that check
        (assoc db ::db-s/selected-ship type)))))
 

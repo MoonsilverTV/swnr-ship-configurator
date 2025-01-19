@@ -30,7 +30,9 @@
 (s/def ::ship-data (s/and (s/map-of ::ship-id ::ship-data-record)
                           #(not-empty %)))
 
-(s/def ::app-db (s/keys :req [::ship-data ::selected-ship]))
+(s/def ::app-db (s/and (s/keys :req [::ship-data ::selected-ship])
+                       ;#(c/contains? (::ship-data %) (::selected-ship %)) TODO: need to adapt generators for this...
+                       ))
 
 (comment
   #_{:clj-kondo/ignore [:unresolved-namespace]}
