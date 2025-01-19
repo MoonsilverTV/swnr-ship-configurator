@@ -33,7 +33,7 @@
 (s/def ::fitting-id keyword?) ;; TODO constrain this or no?
 
 (s/def ::fitting-name (s/and string? not-empty))
-(s/def ::fitting-cost-scales? (s/nilable boolean?))
+(s/def ::fitting-cost-scales? boolean?)
 (s/def ::fitting-cost-base (s/or :reasonable-integer (s/int-in 0 (inc (* 1000 1000)))
                                  :special #{:special}))
 (s/def ::fitting-cost (s/and (s/keys :req [::fitting-cost-base ::fitting-cost-scales?])

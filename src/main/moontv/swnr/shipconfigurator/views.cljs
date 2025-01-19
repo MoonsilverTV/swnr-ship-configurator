@@ -3,7 +3,8 @@
    [moontv.swnr.shipconfigurator.db-spec :as db-s]
    [moontv.swnr.shipconfigurator.events :as events]
    [moontv.swnr.shipconfigurator.sub :as sub]
-   [re-frame.core :as rf]))
+   [re-frame.core :as rf]
+   [clojure.string :as str]))
 
 ;; TODO: really understand props passing, subscriptions, and rerenders (especially with callbacks)
 
@@ -31,7 +32,15 @@
 
 (defn fitting-selector
   []
-  [:div "this is the fitting selector"])
+  (let [fittings @(rf/subscribe [::sub/materialized-fitting-options])
+        columns [::sub/fitting-name ::sub/fitting-cost ::sub/fitting-power ::sub/fitting-mass ::sub/fitting-class ::sub/fitting-effect]]
+    [:div [:table [:thead [:tr
+                           (for [title ["Name" "Cost" "Power" "Mass" "Class" "Effect"]]
+                             ^{:key title} [:th  title])]] [:tbody
+                                                            (for [fitting fittings]
+                                                              ^{:key (::db-s/fitting-id fitting)} [:tr
+                                                                                                   (for [column-key columns]
+                                                                                                     ^{:key column-key}  [:td (column-key fitting)])])]]]))
 
 (defn defenses-selector
   []
