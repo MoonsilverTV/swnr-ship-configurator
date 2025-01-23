@@ -58,7 +58,10 @@
 (s/def ::fitting-data (s/and (s/map-of ::fitting-id ::fitting-data-record)
                              not-empty))
 
-(s/def ::app-db (s/and (s/keys :req [::ship-data ::selected-ship ::fitting-data])
+(s/def ::fitting-quantity (s/int-in 0 100))
+(s/def ::selected-fittings (s/map-of ::fitting-id ::fitting-quantity))
+
+(s/def ::app-db (s/and (s/keys :req [::ship-data ::selected-ship ::fitting-data ::selected-fittings])
                        ;#(c/contains? (::ship-data %) (::selected-ship %)) TODO: need to adapt generators for this...
                        ))
 
@@ -66,10 +69,9 @@
   #_{:clj-kondo/ignore [:unresolved-namespace]}
   (re-frame.core/dispatch :moontv.swnr.shipconfigurator.events/initialize)
   (s/explain ::app-db @re-frame.db/app-db)
+  (s/valid? ::selected-fittings ())
 
-  (require 'clojure.test.check.generators )
+  (require 'clojure.test.check.generators)
   (s/explain-data ::fitting-cost {:moontv.swnr.shipconfigurator.db-spec/fitting-cost-base
                                   25000
-                                  :moontv.swnr.shipconfigurator.db-spec/fitting-cost-scales? true})
-
-  )
+                                  :moontv.swnr.shipconfigurator.db-spec/fitting-cost-scales? true}))

@@ -1,7 +1,9 @@
 (ns moontv.swnr.shipconfigurator.events
   (:require [re-frame.core :as rf]
             [clojure.spec.alpha :as s]
-            [moontv.swnr.shipconfigurator.db-spec :as db-s]))
+            [moontv.swnr.shipconfigurator.db-spec :as db-s]
+            [re-frame.db :as db]
+            [cljs.core :as c]))
 
 (defn check-and-throw ;; TODO refactor this to be optimized out in prod?
   "Throws an exception if `db` doesn't match the Spec `a-spec`."
@@ -359,7 +361,8 @@
 ] ;; TODO::db-s/ fix ordering in UI (maybe i don't even want a map and instead want a [[] [] []...])
      {::db-s/ship-data ship-data
       ::db-s/selected-ship :large-station
-      ::db-s/fitting-data fitting-data})))
+      ::db-s/fitting-data fitting-data
+      ::db-s/selected-fittings {}})))
 
 (rf/reg-event-db
  ::select-ship
@@ -370,3 +373,13 @@
        ;; TODO: implement undo / redo so we no longer need that check
        (assoc db ::db-s/selected-ship type)))))
 
+(rf/reg-event-db
+ ::equip-fitting
+ [check-spec-interceptor]
+ (fn [db [_event-name fitting-id]]
+   (update-in db [::db-s/selected-fittings fitting-id] #(+ 1 %))) ; TODO: spec this
+ )
+(c/comment
+
+  (def db @re-frame.db/app-db)
+  (def fitting-id ::db-s/workshop))

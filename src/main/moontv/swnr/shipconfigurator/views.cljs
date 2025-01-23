@@ -35,10 +35,11 @@
   (let [fittings @(rf/subscribe [::sub/materialized-fitting-options])
         columns [::sub/fitting-name ::sub/fitting-cost ::sub/fitting-power ::sub/fitting-mass ::sub/fitting-class ::sub/fitting-effect]]
     [:div [:table [:thead [:tr
-                           (for [title ["Name" "Cost" "Power" "Mass" "Class" "Effect"]]
+                           (for [title ["Add", "Name" "Cost" "Power" "Mass" "Class" "Effect"]]
                              ^{:key title} [:th  title])]] [:tbody
                                                             (for [fitting fittings]
                                                               ^{:key (::db-s/fitting-id fitting)} [:tr
+                                                                                                   [:td [:button {:on-mouse-down #(rf/dispatch [::events/equip-fitting (::db-s/fitting-id fitting)])} "+"]]
                                                                                                    (for [column-key columns]
                                                                                                      ^{:key column-key}  [:td (column-key fitting)])])]]]))
 
